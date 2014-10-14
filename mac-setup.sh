@@ -8,7 +8,8 @@ sudo dscl . append /Groups/wheel GroupMembership $USER
 sudo ./install-xcode.sh
 
 #Install Ansible
-git clone https://github.com/ansible/ansible.git ~/src/github.com/ansible/ansible; cd ~/src/github.com/ansible/ansible; sudo make install
+sudo easy_install pip
+sudo CFLAGS=-Qunused-arguments CPPFLAGS=-Qunused-arguments pip install ansible
 
 #Run Ansible
 PYTHONIOENCODING='utf-8' HOMEBREW_CASK_OPTS="--appdir=/Applications" ansible-galaxy install -r requirements.yml && ansible-playbook desktop.yml
