@@ -1,0 +1,8 @@
+---
+npm_packages:
+  - grunt-cli
+  - bower
+  - yo
+  - ember-cli
+  - broccoli-cli
+  - jshint

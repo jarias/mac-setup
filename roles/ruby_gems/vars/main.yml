@@ -1,0 +1,12 @@
+---
+gems:
+  - bundler
+  - homesick
+  - git-smart
+  - lunchy
+  - berkshelf
+  - pry
+  - hirb
+  - rake
+  - svn2git
+  - ghost

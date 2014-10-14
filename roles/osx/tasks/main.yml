@@ -1,0 +1,6 @@
+---
+- name: osx defaults template
+  template: src=osx.sh dest=/tmp/osx.sh mode=0744
+
+- name: run osx defaults
+  command: /tmp/osx.sh

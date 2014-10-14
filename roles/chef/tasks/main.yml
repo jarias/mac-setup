@@ -1,0 +1,8 @@
+---
+- name: clear .chef
+  command: rm -rf ~/.chef
+  ignore_errors: True
+
+- name: symlink to dropbox
+  file: state=link src="~/Dropbox/chef" dest="~/.chef" force=true
+

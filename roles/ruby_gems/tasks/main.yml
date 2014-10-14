@@ -1,0 +1,3 @@
+- name: install gems
+  command: /usr/local/bin/gem install {{ item }}
+  with_items: gems

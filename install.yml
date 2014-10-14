@@ -5,15 +5,81 @@
   - role: osxc.packages
     brew_taps:
     - caskroom/fonts
+    - homebrew/binary
+    - caskroom/versions
     brew_packages:
-    - git
-    - zsh
-    - vim
-    - the_silver_searcher
+    - fleetctl
     - ctags
-    - reattach-to-user-namespace
+    - imagemagick
+    - cloc
+    - ack
+    - mercurial
+    - bazaar
+    - hub
+    - direnv
+    - git
+    - git-flow-avh
     - tmux
+    - docker
+    - boot2docker
+    - gist
+    - reattach-to-user-namespace
+    - packer
+    - ngrok
+    - awscli
+    - android-sdk
+    - maven
+    - ant
+    - gradle
+    - python
+    - node
+    - ruby
+    - jruby
+    - legit
+    - postgres
+    - mongodb
+    - redis
+    - mariadb
+    - zsh
     cask_packages:
-    - font-inconsolata-for-powerline
+    - font-source-code-pro
+    - font-inconsolata-dz-for-powerline
+    - font-symbola
+    - java
+    - alfred
+    - intellij-idea
+    - pycharm-ce
+    - rubymine
+    - sublime-text-dev
+    - virtualbox
+    - vmware-fusion
+    - vagrant
+    - horndis
+    - skitch
+    - dropbox
+    - evernote
+    - firefox
+    - flash
+    - google-chrome
+    - google-hangouts
+    - hipchat
+    - libreoffice
+    - reggy
+    - skype
+    - vlc
+    - appcleaner
     - iterm2
-    - macvim
+    - remote-desktop-connection
+    - joinme
+    - silverlight
+    - adobe-air
+    - mono-mdk
+    - onepassword
+    - arduino-beta
+    - chefdk
+  - role: heroku
+  - role: ruby_gems
+  - role: npm_packages
+  tasks:
+    name: Install Golang
+    homebrew: name=go state=latest install_options=--cross-compile-all

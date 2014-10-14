@@ -1,0 +1,32 @@
+---
+# binds zsh config
+- name: add homebrew zsh to /etc/shells
+  lineinfile: dest=/etc/shells regexp="local" line="/usr/local/bin/zsh" state=present
+  sudo: yes
+
+- name: assert binding of oh-my-zsh
+  command: test -d ~/.oh-my-zsh
+  ignore_errors: True
+  register: omz_bound
+
+- name: backup .zshrc
+  command: cp ~/.zshrc ~/.zshrc.orig
+  ignore_errors: True
+  when: omz_bound|failed
+
+- name: symlink oh-my-zsh
+  file: state=link src=~/src/github.com/robbyrussell/oh-my-zsh dest=~/.oh-my-zsh
+  when: omz_bound|failed
+
+- name: copy oh-my-zsh template
+  copy: src=~/.oh-my-zsh/templates/zshrc.zsh-template dest=~/.zshrc
+  when: omz_bound|failed
+
+- name: change shell
+  command: chsh -s /usr/local/bin/zsh
+
+- name: change oh-my-zsh plugin list
+  lineinfile: dest=~/.zshrc regexp="^plugins=" line="plugins=(brew brew-cask git git-flow-avh osx vagrant)" state=present
+
+- name: change prompt theme
+  lineinfile: dest=~/.zshrc regexp="^ZSH_THEME=" line="ZSH_THEME=\"pygmalion\"" state=present

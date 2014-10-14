@@ -1,0 +1,3 @@
+---
+- name: legit link
+  command: legit install
