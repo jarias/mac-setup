@@ -80,6 +80,7 @@
   - role: heroku
   - role: ruby_gems
   - role: npm_packages
+  - role: vagrant
   tasks:
     name: Install Golang
     homebrew: name=go state=latest install_options=--cross-compile-all
