@@ -1,0 +1,5 @@
+---
+dependencies:
+  - role: osxc.repository
+    clone_url: https://github.com/kcrawford/dockutil.git
+    dest: /Users/{{ ansible_user_id }}/src/github.com/kcrawford/dockutil
