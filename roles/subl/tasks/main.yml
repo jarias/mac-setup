@@ -1,14 +1,9 @@
 ---
-- name: ensure ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/ exists
-  file: path=~/Library/Application\ Support/Sublime\ Text\ 3/Packages/ state=directory recurse=yes
+- name: ensure ~/Library/Application Support/Sublime Text 3/Packages exists
+  file: path="~/Library/Application Support/Sublime Text 3/Packages" state=directory recurse=yes
 
 - name: remove Sublime Text 3 user settings
-  shell: "rm -r User"
-  ignore_errors: True
-  args:
-    chdir: ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/
+  file: path="~/Library/Application Support/Sublime Text 3/Packages/User" state=absent
 
 - name: link Sublime Text 3 user settings
-  shell: "ln -s ~/Dropbox/Sublime/User"
-  args:
-    chdir: ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/
+  file: state=link src="~/Dropbox/Sublime/User" dest="~/Library/Application Support/Sublime Text 3/Packages/User" force=true
