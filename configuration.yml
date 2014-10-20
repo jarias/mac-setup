@@ -1,10 +1,7 @@
 ---
 # Configure your freshly installed software
 - hosts: all
-  roles:
-  - role: osxc.repository
-    clone_url: https://github.com/robbyrussell/oh-my-zsh.git
-    dest: /Users/{{ ansible_user_id }}/.oh-my-zsh
+  roles:  
   #- role: osx
   - role: homedir
   - role: dotfiles
@@ -14,6 +11,7 @@
   - role: jetbrains
   - role: legit
   - role: dock
+  - role: subl
     apps:
       - /Applications/Google Chrome.app
       - /Applications/Skype.app
