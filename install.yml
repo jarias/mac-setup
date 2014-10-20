@@ -40,7 +40,7 @@
     - mongodb
     - redis
     - mariadb
-    - zsh    
+    - zsh
     cask_packages:
     - font-source-code-pro
     - font-inconsolata-dz-for-powerline
@@ -78,6 +78,7 @@
     - arduino-beta
     - chefdk
     - mailbox
+    - adobe-creative-cloud
   - role: heroku
   - role: ruby_gems
   - role: npm_packages
