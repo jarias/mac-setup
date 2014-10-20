@@ -40,7 +40,7 @@
     - mongodb
     - redis
     - mariadb
-    - zsh
+    - zsh    
     cask_packages:
     - font-source-code-pro
     - font-inconsolata-dz-for-powerline
@@ -72,7 +72,7 @@
     - remote-desktop-connection
     - joinme
     - silverlight
-    - adobe-air
+    #- adobe-air
     - mono-mdk
     - onepassword
     - arduino-beta
@@ -82,6 +82,8 @@
   - role: ruby_gems
   - role: npm_packages
   - role: vagrant
+  - role: vim
+  - role: powerline
   tasks:
     name: Install Golang
     homebrew: name=go state=latest install_options=--cross-compile-all
