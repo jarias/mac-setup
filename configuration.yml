@@ -1,14 +1,14 @@
 ---
 # Configure your freshly installed software
 - hosts: all
-  roles:  
+  roles:
   #- role: osx
   - role: homedir
   - role: dotfiles
   - role: ssh
-  - role: alfred
+  #- role: alfred
   - role: chef
-  - role: jetbrains
+  #- role: jetbrains
   - role: legit
   - role: dock
   - role: subl
