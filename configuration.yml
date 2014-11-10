@@ -6,12 +6,10 @@
   - role: homedir
   - role: dotfiles
   - role: ssh
-  #- role: alfred
   - role: chef
-  #- role: jetbrains
   - role: legit
-  - role: dock
   - role: subl
+  - role: dock
     apps:
       - /Applications/Google Chrome.app
       - /Applications/Skype.app
