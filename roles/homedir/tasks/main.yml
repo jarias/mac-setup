@@ -1,6 +1,4 @@
 ---
-# link correct paths in home directory
-
 - name: determine linked document location
   command: test -L ~/Documents
   ignore_errors: True
@@ -11,5 +9,11 @@
   ignore_errors: True
   when: doc_linked|failed
 
-- name: symlink to dropbox
+- name: symlink ~/Documents to dropbox
   file: state=link src="~/Dropbox/Documents" dest="~/Documents" force=true
+
+- name: symlink ~/src to Happy
+  file: state=link src="/Volumes/Happy/src" dest="~/src" force=true
+
+- name: create ~/bin directory
+  file: state=directory src="~/bin"
