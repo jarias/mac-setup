@@ -16,4 +16,4 @@
   file: state=link src="/Volumes/Happy/src" dest="~/src" force=true
 
 - name: create ~/bin directory
-  file: state=directory src="~/bin"
+  file: state=directory path="~/bin"
