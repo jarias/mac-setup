@@ -8,6 +8,7 @@
   - role: chef
   - role: legit
   - role: subl
+  - role: git
   - role: dock
     apps:
       - /Applications/Google Chrome.app
