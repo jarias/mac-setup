@@ -7,6 +7,3 @@
 
 - name: link Sublime Text 3 user settings
   file: state=link src="~/Dropbox/Sublime/User" dest="~/Library/Application Support/Sublime Text 3/Packages/User" force=true
-
-- name: linke Sublime Text 3 cli command
-  file: state=link src="/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" dest="~/bin/subl" force=true
