@@ -12,8 +12,8 @@
 - name: symlink ~/Documents to dropbox
   file: state=link src="~/Dropbox/Documents" dest="~/Documents" force=true
 
-- name: symlink ~/src to Happy
-  file: state=link src="/Volumes/Happy/src" dest="~/src" force=true
+- name: create ~/src directory
+  file: state=directory path="~/src"
 
 - name: create ~/bin directory
   file: state=directory path="~/bin"
