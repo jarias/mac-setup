@@ -1,9 +1,6 @@
 ---
-#- name: install macvim
-#  homebrew: name=macvim install_options="--env-std --override-system-vim --with-lua"
-
 - name: install vim
-  homebrew: name=vim install_options="--env-std --override-system-vi"
+  homebrew: name=vim install_options="--env-std --override-system-vi --with-lua"
 
 - name: create bundle directory
   file: path=~/.vim/bundle state=directory recurse=true
@@ -17,6 +14,7 @@
 - name: install vim plugins
   git: repo={{ item.repo }} dest=~/.vim/bundle/{{ item.name }}
   with_items:
+    - { repo: 'https://github.com/Shougo/neocomplete.vim', name: 'neocomplete.tool' }
     - { repo: 'https://github.com/mileszs/ack.vim.git', name: 'ack.tool' }
     - { repo: 'https://github.com/vim-scripts/molokai.git', name: 'molokai.color' }
     - { repo: 'https://github.com/scrooloose/nerdtree.git', name: 'nerdtree.tool' }
