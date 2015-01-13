@@ -39,7 +39,6 @@
     - postgres
     - mongodb
     - redis
-    - mariadb
     - zsh
     - sslmate
     - fig
