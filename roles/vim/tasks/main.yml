@@ -1,6 +1,6 @@
 ---
 - name: install vim
-  homebrew: name=vim install_options="--env-std --override-system-vi --with-lua"
+  homebrew: name=vim install_options="--with-lua"
 
 - name: create bundle directory
   file: path=~/.vim/bundle state=directory recurse=true
