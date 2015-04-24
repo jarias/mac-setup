@@ -12,8 +12,8 @@
 - name: symlink ~/Documents to dropbox
   file: state=link src="~/Dropbox/Documents" dest="~/Documents" force=true
 
-- name: create ~/src directory
-  file: state=directory path="~/src"
+- name: create ~/Projects directory
+  file: state=directory path="~/Projects"
 
-- name: create ~/bin directory
-  file: state=directory path="~/bin"
+- name: create ~/Golang directory
+  file: state=directory path="~/Golang"
