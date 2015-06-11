@@ -6,7 +6,6 @@
   - role: dotfiles
   - role: ssh
   - role: chef
-  - role: legit
   - role: subl
   - role: git
   - role: dock
