@@ -35,6 +35,7 @@
     - lua
     - docker-compose
     - docker-machine
+    - syncthing
   - role: heroku_plugins
   - role: ruby_gems
   - role: npm_packages
