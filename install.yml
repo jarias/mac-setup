@@ -66,6 +66,20 @@
     - name: Install Vim
       homebrew: name=vim state=latest install_options="--with-lua"
 
+    - name: Create GOPATH dir
+      file: state=directory path="~/Golang"
+    - name: Install default Go packages
+      shell: GOPATH=~/Golang go get -u {{ item.package }}
+      with_items:
+        - { package: github.com/tools/godep }
+        - { package: golang.org/x/tools/cmd/gotype }
+        - { package: golang.org/x/tools/cmd/goimports }
+        - { package: golang.org/x/tools/cmd/cover }
+        - { package: github.com/onsi/ginkgo/ginkgo }
+        - { package: github.com/onsi/gomega }
+        - { package: github.com/golang/lint/golint }
+        - { package: github.com/constabulary/gb/... }
+
     # Launchd Agents
     - name: Link syncthing launchd plist
       file: state=link src="/usr/local/opt/syncthing/homebrew.mxcl.syncthing.plist" dest="~/Library/LaunchAgents/homebrew.mxcl.syncthing.plist" force=true
