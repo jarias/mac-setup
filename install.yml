@@ -1,47 +1,194 @@
+# Copyright 2015 Julio Arias
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 ---
-# Here we describe every software we may want to install
 - hosts: all
-  roles:
-  - role: packages
-    brew_taps:
-    - homebrew/binary
-    brew_packages:
-    - heroku-toolbelt
-    - ctags
-    - imagemagick
-    - cloc
-    - ack
-    - mercurial
-    - bazaar
-    - hub
-    - direnv
-    - git
-    - git-flow-avh
-    - tmux
-    - docker
-    - gist
-    - reattach-to-user-namespace
-    - packer
-    - ngrok
-    - awscli
-    - maven
-    - gradle
-    - python
-    - node
-    - ruby
-    - zsh
-    - sslmate
-    - lua
-    - docker-compose
-    - docker-machine
-    - syncthing
-    - pgcli
-  - role: heroku_plugins
-  - role: ruby_gems
-  - role: npm_packages
-  - role: vagrant_plugins
-  - role: vim
-  - role: powerline
   tasks:
-    name: Install Golang
-    homebrew: name=go state=latest install_options=--cross-compile-all
+    # homebrew taps
+    - name: Tap homebrew/binary repo
+      homebrew_tap: tap=homebrew/binary state=present
+    - name: Tap homebrew/versions repo
+      homebrew_tap: tap=homebrew/versions state=present
+
+    - name: Install default packages
+      homebrew: name={{ item }} state=latest
+      with_items:
+        - heroku-toolbelt
+        - ctags
+        - imagemagick
+        - cloc
+        - ack
+        - mercurial
+        - bazaar
+        - hub
+        - direnv
+        - git
+        - git-flow-avh
+        - tmux
+        - docker
+        - docker-compose
+        - docker-machine
+        - gist
+        - reattach-to-user-namespace
+        - packer
+        - terraform
+        - ngrok
+        - awscli
+        - maven30
+        - gradle
+        - python
+        - node
+        - ruby
+        - zsh
+        - sslmate
+        - lua
+        - docker-compose
+        - docker-machine
+        - syncthing
+        - pgcli
+        - awscli
+        - mycli
+        - tomcat7
+
+    - name: Install Golang
+      homebrew: name=go state=latest install_options=--cross-compile-all
+
+    - name: Install Vim
+      homebrew: name=vim state=latest install_options="--with-lua"
+
+    # Launchd Agents
+    - name: Link syncthing launchd plist
+      file: state=link src="/usr/local/opt/syncthing/homebrew.mxcl.syncthing.plist" dest="~/Library/LaunchAgents/homebrew.mxcl.syncthing.plist" force=true
+    - name: Start syncthing launchd agent
+      command: launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.syncthing.plist
+
+    # Python pip
+    - name: Install psutil
+      pip: name=psutil extra_args='--user' executable=/usr/local/bin/pip
+    - name: Install powerline-status
+      pip: name=powerline-status extra_args='--user --install-option="--prefix="' executable=/usr/local/bin/pip
+
+    # Gems
+    - name: Install default Ruby Gems
+      gem: name={{ item }} state=present user_install=no executable=/usr/local/bin/gem
+      with_items:
+        - bundler
+        - homesick
+        - git-smart
+        - lunchy
+        - berkshelf
+        - pry
+        - hirb
+        - svn2git
+        - ghost
+        - lolcat
+
+    # NPM
+    - name: Setup NPM prefix
+      command: /usr/local/bin/npm config set prefix '~/.npm-packages'
+               creates=~/.npmrc
+    - name: Install NPM default packages
+      npm: name={{ item }} global=yes executable=/usr/local/bin/npm
+      with_items:
+        - grunt-cli
+        - bower
+        - yo
+        - ember-cli
+        - broccoli-cli
+        - jshint
+
+        # Heroku plugins
+    - name: Install Heroku plugins
+      command: heroku plugins:install {{ item }}
+      with_items:
+        - https://github.com/ddollar/heroku-accounts.git
+        - https://github.com/heroku/heroku-pg-extras.git
+        - https://github.com/ddollar/heroku-pg-transfer.git
+
+    # Vagrant plugins
+    - name: Install Vagrant plugins
+      command: vagrant plugin install {{ item }}
+      with_items:
+        - vagrant-vbguest
+        - vagrant-berkshelf
+
+    # Fonts
+    - name: Clone powerline fonts repo
+      git: repo=https://github.com/powerline/fonts dest=/tmp/powerline-fonts
+    - name: Install powerline fonts
+      command: /tmp/powerline-fonts/install.sh chdir=/tmp/powerline-fonts
+
+    - name: Download source code pro fonts
+      get_url: url=https://github.com/adobe-fonts/source-code-pro/archive/2.010R-ro/1.030R-it.tar.gz
+               dest=/tmp/1.030R-it.tar.gz
+    - name: Unarchive source code pro fonts
+      unarchive: src=/tmp/1.030R-it.tar.gz
+                 dest=/tmp
+                 creates=/tmp/source-code-pro-2.010R-ro-1.030R-it
+                 copy=no
+    - name: Install source code pro fonts
+      synchronize: src=/usr/local/downloads/source-code-pro-2.010R-ro-1.030R-it/OTF/ dest=~/Library/Fonts
+
+    - name: Download hack font
+      get_url: url=https://github.com/chrissimpkins/Hack/releases/download/v2.015/Hack-v2_015-otf.tar.gz
+               dest=/tmp/Hack-v2_015-otf.tar.gz
+    - name: Unarchive source code pro fonts
+      unarchive: src=/tmp/Hack-v2_015-otf.tar.gz
+                 dest=~/Library/Fonts
+                 copy=no
+
+    # Docker Machine
+    - name: Create default docker-machine
+      command: docker-machine create -d virtualbox --virtualbox-memory 4096 default
+    - name: Install default docker-machine launchd config
+      copy: src=files/com.docker.machine.default.plist dest=~/Library/LaunchAgents/com.docker.machine.default.plist
+    - name: Start default docker-machine launchd agent
+      command: launchctl load -w ~/Library/LaunchAgents/com.docker.machine.default.plist
+
+    # Vim plugins
+    - name: Create bundle directory
+      file: path=~/.vim/bundle state=directory recurse=true
+
+    - name: Create autoload directory
+      file: path=~/.vim/autoload state=directory recurse=true
+
+    - name: Install Pathogen
+      get_url: url=https://raw.github.com/tpope/vim-pathogen/master/autoload/pathogen.vim
+               dest=~/.vim/autoload/pathogen.vim
+
+    - name: Install Vim plugins
+      git: repo={{ item.repo }} dest=~/.vim/bundle/{{ item.name }}
+      with_items:
+        - { repo: 'https://github.com/Shougo/neocomplete.vim', name: 'neocomplete.tool' }
+        - { repo: 'https://github.com/mileszs/ack.vim.git', name: 'ack.tool' }
+        - { repo: 'https://github.com/vim-scripts/molokai.git', name: 'molokai.color' }
+        - { repo: 'https://github.com/scrooloose/nerdtree.git', name: 'nerdtree.tool' }
+        - { repo: 'https://github.com/jeetsukumaran/vim-buffergator.git', name: 'buffergator.tool' }
+        - { repo: 'https://github.com/tpope/vim-fugitive.git', name: 'fugitive.tool' }
+        - { repo: 'https://github.com/fatih/vim-go.git', name: 'go.lang' }
+        - { repo: 'https://github.com/pangloss/vim-javascript.git', name: 'javascript.lang' }
+        - { repo: 'https://github.com/mmalecki/vim-node.js.git', name: 'nodejs.lang' }
+        - { repo: 'https://github.com/kien/ctrlp.vim.git', name: 'ctrlp.tool' }
+        - { repo: 'https://github.com/scrooloose/nerdcommenter.git', name: 'nerdcommenter.tool' }
+        - { repo: 'https://github.com/ervandew/supertab.git', name: 'supertab.tool' }
+        - { repo: 'https://github.com/Lokaltog/vim-easymotion.git', name: 'easymotion.tool' }
+        - { repo: 'https://github.com/tpope/vim-git.git', name: 'git.lang' }
+        - { repo: 'https://github.com/tfnico/vim-gradle.git', name: 'gradle.lang' }
+        - { repo: 'https://github.com/groenewege/vim-less.git', name: 'less.lang' }
+        - { repo: 'https://github.com/bronson/vim-trailing-whitespace.git', name: 'trailing-whitespace.tool' }
+        - { repo: 'https://github.com/terryma/vim-multiple-cursors.git', name: 'multiple-cursors.tool' }
+        - { repo: 'https://github.com/scrooloose/syntastic.git', name: 'syntastic.tool' }
+        - { repo: 'https://github.com/maksimr/vim-jsbeautify.git', name: 'jsbeautify.tool' }
+        - { repo: 'https://github.com/tpope/vim-sensible.git', name: 'vim-sensible.config' }
+        - { repo: 'https://github.com/majutsushi/tagbar.git', name: 'tagbar.tool' }
+        - { repo: 'https://github.com/vim-scripts/ZoomWin.git', name: 'ZoomWin.tool' }

@@ -1,7 +1,7 @@
 ---
 
 - name: Install Dockutils
-  git: repo=https://github.com/kcrawford/dockutil.git dest=/Users/{{ ansible_user_id }}/src/github.com/kcrawford/dockutil
+  git: repo=https://github.com/kcrawford/dockutil.git dest=/tmp/dockutil
 
 - name: clean dock
   shell: "PYTHONIOENCODING=utf-8 {{ dockutil_exe }} --remove all creates=~/.managed-dock"

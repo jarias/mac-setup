@@ -1,9 +1,0 @@
----
-- name: ensure ~/Library/Application Support/Sublime Text 3/Packages exists
-  file: path="~/Library/Application Support/Sublime Text 3/Packages" state=directory recurse=yes
-
-- name: remove Sublime Text 3 user settings
-  file: path="~/Library/Application Support/Sublime Text 3/Packages/User" state=absent
-
-- name: link Sublime Text 3 user settings
-  file: state=link src="~/Dropbox/Sublime/User" dest="~/Library/Application Support/Sublime Text 3/Packages/User" force=true

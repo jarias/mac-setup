@@ -1,13 +1,19 @@
+# Copyright 2015 Julio Arias
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 ---
-# Configure your freshly installed software
 - hosts: all
   roles:
-  - role: homedir
-  - role: dotfiles
-  - role: ssh
-  - role: chef
-  - role: subl
-  - role: git
   - role: dock
     apps:
       - /Applications/Google Chrome.app
@@ -19,3 +25,96 @@
     folders:
     - path: ~/Downloads
       sort: datemodified
+
+  tasks:
+    # Oh-My-Zsh
+    - name: Clone oh-my-zsh
+      git: repo=https://github.com/robbyrussell/oh-my-zsh.git dest=~/.oh-my-zsh
+
+    - name: Backup ~/.zshrc
+      command: mv ~/.zshrc ~/.zshrc.backup
+      ignore_errors: True
+
+    - name: Copy oh-my-zsh template .zshrc
+      copy: src=~/.oh-my-zsh/templates/zshrc.zsh-template dest=~/.zshrc
+
+    - name: Change oh-my-zsh plugin list
+      lineinfile: dest=~/.zshrc regexp="^plugins=" line="plugins=(git git-flow-avh vagrant)" state=present
+
+    - name: Change prompt theme
+      lineinfile: dest=~/.zshrc regexp="^ZSH_THEME=" line="ZSH_THEME=\"pygmalion\"" state=present
+
+    # Dotfiles
+    - name: Clone homesick repos
+      command: /usr/local/bin/homesick clone {{item.repo}} creates=~/.homesick/repos/{{ item.name }}
+      with_items:
+        - { repo: "https://github.com/jarias/dotfiles.git", name: dotfiles }
+
+    - name: Symlink dotfiles
+      command: /usr/local/bin/homesick symlink --force dotfiles
+
+    - name: Ensure ~/.zshrc presence
+      ignore_errors: True
+      file: path=~/.zshrc state=touch
+
+    - name: Add ~/.zshrc.local load to ~/.zshrc
+      lineinfile: dest=~/.zshrc regexp="\.zshrc\.local" line=". ~/.zshrc.local" state=present
+
+    # Home directory
+    - name: Determine if ~/Documents is a link already
+      command: test -L ~/Documents
+      ignore_errors: True
+      register: doc_linked
+
+    - name: Backup ~/Documents folder if its not a link
+      command: sudo mv ~/Documents ~/Documents.backup
+      ignore_errors: True
+      when: doc_linked|failed
+
+    - name: symlink ~/Documents to ~/Dropbox/Documents
+      file: state=link src="~/Dropbox/Documents" dest="~/Documents" force=true
+
+    - name: create ~/Projects directory
+      file: state=directory path="~/Projects"
+
+    # Sublime Text 3
+    - name: Ensure ~/.config/sublime-text-3/Packages exists
+      file: path="~/.config/sublime-text-3/Packages" state=directory recurse=yes
+
+    - name: Remove Sublime Text 3 user settings
+      file: path="~/.config/sublime-text-3/Packages/User" state=absent
+
+    - name: Link Sublime Text 3 user settings
+      file: state=link src="~/Dropbox/Sublime/User" dest="~/.config/sublime-text-3/Packages/User" force=true
+
+    # SSH config
+    - name: Clear ~/.ssh contents
+      file: path=~/.ssh state=absent
+
+    - name: Symlink ~/.ssh to ~/Dropbox/ssh
+      file: state=link src="~/Dropbox/ssh" dest="~/.ssh" force=true
+
+    - name: Disable empty password login
+      lineinfile: dest=/etc/sshd_config regexp="^#?PermitEmptyPasswords" line="PermitEmptyPasswords no"
+      sudo: True
+
+    - name: Disable remote root login
+      lineinfile: dest=/etc/sshd_config regexp="^#?PermitRootLogin" line="PermitRootLogin no"
+      sudo: True
+
+    - name: Disable password login
+      lineinfile: dest=/etc/sshd_config regexp="^#?PasswordAuthentication" line="PasswordAuthentication no"
+      sudo: True
+
+    # Chef config
+    - name: Clear ~/.chef if exists
+      file: path=~/.chef state=absent
+      ignore_errors: True
+
+    - name: Symlink ~/.chef to ~/Dropbox/chef
+      file: state=link src="~/Dropbox/chef" dest="~/.chef" force=true
+
+    # User
+    - name: Modify current user groups and shell
+      command: chsh -s /usr/local/bin/zsh {{ lookup('env','USER') }}
+      sudo: True
