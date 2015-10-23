@@ -163,7 +163,7 @@
 
     # Docker Machine
     - name: Create default docker-machine
-      command: docker-machine create -d virtualbox --virtualbox-memory 4096 default
+      command: docker-machine create -d vmwarefusion --vmwarefusion-memory-size 4096 default
     - name: Install default docker-machine launchd config
       copy: src=files/com.docker.machine.default.plist dest=~/Library/LaunchAgents/com.docker.machine.default.plist
     - name: Start default docker-machine launchd agent
